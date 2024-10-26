@@ -1,4 +1,4 @@
-module github.com/mstoykov/xk6-custom-metric
+module github.com/weityang/xk6-custom-metric
 
 go 1.17
 
