@@ -21,7 +21,7 @@ type RootModule struct {
 var _ modules.Module = &RootModule{}
 
 func (r *RootModule) NewModuleInstance(vu modules.VU) modules.Instance {
-	r.customMetric = vu.InitEnv().Registry.MustNewMetric("coolname", metrics.Trend)
+	r.customMetric = vu.InitEnv().Registry.MustNewMetric("coolname", metrics.Rate)
 	return &thisModule{
 		vu:   vu,
 		root: r,
