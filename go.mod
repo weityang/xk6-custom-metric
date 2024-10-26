@@ -2,7 +2,7 @@ module github.com/mstoykov/xk6-custom-metric
 
 go 1.17
 
-require go.k6.io/k6 v0.35.0
+require go.k6.io/k6 v0.54.0
 
 require (
 	github.com/Azure/go-ntlmssp v0.0.0-20200615164410-66371956d46c // indirect
