@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"go.k6.io/k6/js/modules"
-	"go.k6.io/k6/stats"
+	"go.k6.io/k6/metrics"
 )
 
 // Register the extension on module initialization, available to
@@ -15,13 +15,13 @@ func init() {
 }
 
 type RootModule struct {
-	customMetric *stats.Metric
+	customMetric *metrics.Metric
 }
 
 var _ modules.Module = &RootModule{}
 
 func (r *RootModule) NewModuleInstance(vu modules.VU) modules.Instance {
-	r.customMetric = vu.InitEnv().Registry.MustNewMetric("coolname", stats.Trend, stats.Time)
+	r.customMetric = vu.InitEnv().Registry.MustNewMetric("coolname", metrics.Trend)
 	return &thisModule{
 		vu:   vu,
 		root: r,
@@ -46,11 +46,16 @@ func (t *thisModule) add(x float64) error {
 	if t.vu.State() == nil {
 		return errors.New("add needs to be called not in the initcontext")
 	}
-	stats.PushIfNotDone(t.vu.Context(), t.vu.State().Samples, stats.Sample{
+
+	timeSeries := metrics.TimeSeries{
 		Metric: t.root.customMetric,
-		Value:  x,
-		Time:   time.Now(),
-		Tags:   stats.NewSampleTags(t.vu.State().CloneTags()),
+		Tags:   t.vu.State().Tags.GetCurrentValues().Tags,
+	}
+
+	metrics.PushIfNotDone(t.vu.Context(), t.vu.State().Samples, metrics.Sample{
+		TimeSeries: timeSeries,
+		Value:      x,
+		Time:       time.Now(),
 	})
 	return nil
 }
