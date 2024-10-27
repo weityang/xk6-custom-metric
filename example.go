@@ -51,6 +51,7 @@ func (t *thisModule) add(x float64, tags map[string]string) error {
 		Metric: t.root.customMetric,
 		// Tags:   t.vu.State().Tags.GetCurrentValues().Tags.WithTagsFromMap(tags),
 		Tags: metrics.NewRegistry().RootTagSet().WithTagsFromMap(tags),
+		// Tags: metrics.DefaultSystemTagSet().WithTagsFromMap(tags),
 	}
 
 	metrics.PushIfNotDone(t.vu.Context(), t.vu.State().Samples, metrics.Sample{
