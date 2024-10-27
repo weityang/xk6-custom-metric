@@ -21,7 +21,7 @@ type RootModule struct {
 var _ modules.Module = &RootModule{}
 
 func (r *RootModule) NewModuleInstance(vu modules.VU) modules.Instance {
-	r.customMetric = vu.InitEnv().Registry.MustNewMetric("custom_req_1_duration", metrics.Rate)
+	r.customMetric = vu.InitEnv().Registry.MustNewMetric("custom_req_duration", metrics.Rate)
 	return &thisModule{
 		vu:   vu,
 		root: r,
@@ -49,8 +49,8 @@ func (t *thisModule) add(x float64, tags map[string]string) error {
 
 	timeSeries := metrics.TimeSeries{
 		Metric: t.root.customMetric,
-		// Tags:   t.vu.State().Tags.GetCurrentValues().Tags.WithTagsFromMap(tags),
-		Tags: metrics.NewRegistry().RootTagSet().WithTagsFromMap(tags),
+		Tags:   t.vu.State().Tags.GetCurrentValues().Tags.WithTagsFromMap(tags),
+		// Tags: metrics.NewRegistry().RootTagSet().WithTagsFromMap(tags),
 		// Tags: metrics.DefaultSystemTagSet().WithTagsFromMap(tags),
 	}
 
