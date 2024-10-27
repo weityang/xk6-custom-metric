@@ -47,11 +47,15 @@ func (t *thisModule) add(x float64, tags map[string]string) error {
 		return errors.New("add needs to be called not in the initcontext")
 	}
 
+	println("Current value tags: ", t.vu.State().Tags.GetCurrentValues().Tags)
+	println("Run tags: ", t.vu.State().Options.RunTags)
+
 	timeSeries := metrics.TimeSeries{
 		Metric: t.root.customMetric,
-		Tags:   t.vu.State().Tags.GetCurrentValues().Tags.WithTagsFromMap(tags),
+		Tags:   t.vu.State().Tags.GetCurrentValues().Tags.WithTagsFromMap(t.vu.State().Options.RunTags).WithTagsFromMap(tags),
+		// Tags: t.vu.State().Options.RunTags,
 		// Tags: metrics.NewRegistry().RootTagSet().WithTagsFromMap(tags),
-		// Tags: metrics.DefaultSystemTagSet().WithTagsFromMap(tags),
+		// Tags: metrics.DefaultSystemTagSet().EnabledTags().WithTagsFromMap(tags),
 	}
 
 	metrics.PushIfNotDone(t.vu.Context(), t.vu.State().Samples, metrics.Sample{
