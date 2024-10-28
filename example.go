@@ -1,7 +1,6 @@
 package customMetric
 
 import (
-	"encoding/json"
 	"errors"
 	"time"
 
@@ -44,22 +43,15 @@ func (t *thisModule) Exports() modules.Exports {
 }
 
 func (t *thisModule) add(x float64, tags map[string]string) error {
-	if t.vu.State() == nil {
+	state := t.vu.State()
+	if state == nil {
 		return errors.New("add needs to be called not in the initcontext")
 	}
 
-	currentTags, _ := json.Marshal(t.vu.State().Tags.GetCurrentValues().Tags.Map())
-	runTags, _ := json.Marshal(t.vu.State().Options.RunTags)
-
-	println("Current value tags: ", string(currentTags))
-	println("Run tags: ", string(runTags))
-
 	timeSeries := metrics.TimeSeries{
 		Metric: t.root.customMetric,
-		Tags:   t.vu.State().Tags.GetCurrentValues().Tags.WithTagsFromMap(t.vu.State().Options.RunTags).WithTagsFromMap(tags),
-		// Tags: t.vu.State().Options.RunTags,
+		Tags:   state.Tags.GetCurrentValues().Tags.WithTagsFromMap(state.Options.RunTags).WithTagsFromMap(tags),
 		// Tags: metrics.NewRegistry().RootTagSet().WithTagsFromMap(tags),
-		// Tags: metrics.DefaultSystemTagSet().EnabledTags().WithTagsFromMap(tags),
 	}
 
 	metrics.PushIfNotDone(t.vu.Context(), t.vu.State().Samples, metrics.Sample{
