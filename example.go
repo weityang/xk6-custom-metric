@@ -1,6 +1,7 @@
 package customMetric
 
 import (
+	"encoding/json"
 	"errors"
 	"time"
 
@@ -47,8 +48,11 @@ func (t *thisModule) add(x float64, tags map[string]string) error {
 		return errors.New("add needs to be called not in the initcontext")
 	}
 
-	println("Current value tags: ", t.vu.State().Tags.GetCurrentValues().Tags.Map())
-	println("Run tags: ", t.vu.State().Options.RunTags)
+	currentTags, _ := json.Marshal(t.vu.State().Tags.GetCurrentValues().Tags.Map())
+	runTags, _ := json.Marshal(t.vu.State().Options.RunTags)
+
+	println("Current value tags: ", string(currentTags))
+	println("Run tags: ", runTags)
 
 	timeSeries := metrics.TimeSeries{
 		Metric: t.root.customMetric,
