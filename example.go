@@ -52,7 +52,7 @@ func (t *thisModule) add(x float64, tags map[string]string) error {
 	runTags, _ := json.Marshal(t.vu.State().Options.RunTags)
 
 	println("Current value tags: ", string(currentTags))
-	println("Run tags: ", runTags)
+	println("Run tags: ", string(runTags))
 
 	timeSeries := metrics.TimeSeries{
 		Metric: t.root.customMetric,
